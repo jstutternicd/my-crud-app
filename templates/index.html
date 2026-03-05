@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}All Books{% endblock %}
+{% block extra_style %}
+<style>
+    .book-list { list-style: none; }
+    .book-item {
+        background: white;
+        border-radius: 6px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .book-item:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+    .book-info a {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        text-decoration: none;
+    }
+    .book-info a:hover { color: #3498db; }
+    .book-meta { color: #777; font-size: 0.85rem; margin-top: 2px; }
+    .empty { text-align: center; padding: 40px; color: #999; }
+</style>
+{% endblock %}
+{% block content %}
+{% if books %}
+<ul class="book-list">
+    {% for book in books %}
+    <li class="book-item">
+        <div class="book-info">
+            <a href="{{ url_for('detail', book_id=book['id']) }}">{{ book['title'] }}</a>
+            <div class="book-meta">{{ book['author'] }}{% if book['year'] %} &middot; {{ book['year'] }}{% endif %}</div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="empty">No books yet. Add one to get started.</p>
+{% endif %}
+{% endblock %}
