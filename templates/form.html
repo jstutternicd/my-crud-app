@@ -49,6 +49,10 @@
             <input type="number" id="year" name="year" value="{{ book['year'] if book and book['year'] else '' }}">
         </div>
         <div class="form-group">
+            <label for="isbn">ISBN</label>
+            <input type="text" id="isbn" name="isbn" value="{{ book['isbn'] if book and book['isbn'] else '' }}" placeholder="e.g. 9780743273565">
+        </div>
+        <div class="form-group">
             <label for="description">Description</label>
             <textarea id="description" name="description">{{ book['description'] if book and book['description'] else '' }}</textarea>
         </div>

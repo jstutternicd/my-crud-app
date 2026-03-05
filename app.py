@@ -5,16 +5,16 @@ app = Flask(__name__)
 DATABASE = "books.db"
 
 DUMMY_BOOKS = [
-    ("The Great Gatsby", "F. Scott Fitzgerald", 1925, "A story of wealth, love, and the American Dream in the Jazz Age."),
-    ("To Kill a Mockingbird", "Harper Lee", 1960, "A young girl in Alabama witnesses racial injustice and moral courage."),
-    ("1984", "George Orwell", 1949, "A dystopian vision of totalitarian surveillance and thought control."),
-    ("Pride and Prejudice", "Jane Austen", 1813, "A witty tale of manners, marriage, and misjudgment in Regency England."),
-    ("The Catcher in the Rye", "J.D. Salinger", 1951, "A teenager wanders New York City grappling with alienation and identity."),
-    ("One Hundred Years of Solitude", "Gabriel Garcia Marquez", 1967, "A multi-generational saga of the Buendia family in a mythical Colombian town."),
-    ("Brave New World", "Aldous Huxley", 1932, "A future society engineered for stability through pleasure and conformity."),
-    ("The Hobbit", "J.R.R. Tolkien", 1937, "A reluctant hobbit embarks on an epic adventure with dwarves and a wizard."),
-    ("Fahrenheit 451", "Ray Bradbury", 1953, "In a future where books are banned, a fireman begins to question his role."),
-    ("Dune", "Frank Herbert", 1965, "A young nobleman navigates politics, religion, and ecology on a desert planet."),
+    ("The Great Gatsby", "F. Scott Fitzgerald", 1925, "A story of wealth, love, and the American Dream in the Jazz Age.", "9780743273565"),
+    ("To Kill a Mockingbird", "Harper Lee", 1960, "A young girl in Alabama witnesses racial injustice and moral courage.", "9780061120084"),
+    ("1984", "George Orwell", 1949, "A dystopian vision of totalitarian surveillance and thought control.", "9780451524935"),
+    ("Pride and Prejudice", "Jane Austen", 1813, "A witty tale of manners, marriage, and misjudgment in Regency England.", "9780141439518"),
+    ("The Catcher in the Rye", "J.D. Salinger", 1951, "A teenager wanders New York City grappling with alienation and identity.", "9780316769488"),
+    ("One Hundred Years of Solitude", "Gabriel Garcia Marquez", 1967, "A multi-generational saga of the Buendia family in a mythical Colombian town.", "9780060883287"),
+    ("Brave New World", "Aldous Huxley", 1932, "A future society engineered for stability through pleasure and conformity.", "9780060850524"),
+    ("The Hobbit", "J.R.R. Tolkien", 1937, "A reluctant hobbit embarks on an epic adventure with dwarves and a wizard.", "9780547928227"),
+    ("Fahrenheit 451", "Ray Bradbury", 1953, "In a future where books are banned, a fireman begins to question his role.", "9781451673319"),
+    ("Dune", "Frank Herbert", 1965, "A young nobleman navigates politics, religion, and ecology on a desert planet.", "9780441172719"),
 ]
 
 
@@ -40,13 +40,14 @@ def init_db():
             title TEXT NOT NULL,
             author TEXT NOT NULL,
             year INTEGER,
-            description TEXT
+            description TEXT,
+            isbn TEXT
         )"""
     )
     count = db.execute("SELECT COUNT(*) FROM books").fetchone()[0]
     if count == 0:
         db.executemany(
-            "INSERT INTO books (title, author, year, description) VALUES (?, ?, ?, ?)",
+            "INSERT INTO books (title, author, year, description, isbn) VALUES (?, ?, ?, ?, ?)",
             DUMMY_BOOKS,
         )
     db.commit()
@@ -79,14 +80,15 @@ def create():
         author = request.form["author"].strip()
         year = request.form.get("year", "").strip()
         description = request.form.get("description", "").strip()
+        isbn = request.form.get("isbn", "").strip()
         if not title or not author:
             return render_template(
                 "form.html", error="Title and Author are required.", book=request.form
             )
         db = get_db()
         db.execute(
-            "INSERT INTO books (title, author, year, description) VALUES (?, ?, ?, ?)",
-            (title, author, int(year) if year else None, description or None),
+            "INSERT INTO books (title, author, year, description, isbn) VALUES (?, ?, ?, ?, ?)",
+            (title, author, int(year) if year else None, description or None, isbn or None),
         )
         db.commit()
         return redirect(url_for("index"))
@@ -101,13 +103,14 @@ def edit(book_id):
         author = request.form["author"].strip()
         year = request.form.get("year", "").strip()
         description = request.form.get("description", "").strip()
+        isbn = request.form.get("isbn", "").strip()
         if not title or not author:
             return render_template(
                 "form.html", error="Title and Author are required.", book=request.form
             )
         db.execute(
-            "UPDATE books SET title=?, author=?, year=?, description=? WHERE id=?",
-            (title, author, int(year) if year else None, description or None, book_id),
+            "UPDATE books SET title=?, author=?, year=?, description=?, isbn=? WHERE id=?",
+            (title, author, int(year) if year else None, description or None, isbn or None, book_id),
         )
         db.commit()
         return redirect(url_for("detail", book_id=book_id))

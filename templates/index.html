@@ -10,10 +10,31 @@
         margin-bottom: 12px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        gap: 16px;
     }
     .book-item:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+    .book-cover {
+        width: 48px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 3px;
+        flex-shrink: 0;
+        background: #e8e8e8;
+    }
+    .book-cover-placeholder {
+        width: 48px;
+        height: 70px;
+        border-radius: 3px;
+        flex-shrink: 0;
+        background: #e8e8e8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #bbb;
+        font-size: 1.4rem;
+    }
+    .book-info { flex: 1; }
     .book-info a {
         font-size: 1.1rem;
         font-weight: 600;
@@ -30,6 +51,11 @@
 <ul class="book-list">
     {% for book in books %}
     <li class="book-item">
+        {% if book['isbn'] %}
+        <img class="book-cover" src="https://covers.openlibrary.org/b/isbn/{{ book['isbn'] }}-S.jpg" alt="Cover" onerror="this.outerHTML='<div class=\'book-cover-placeholder\'>&#128214;</div>'">
+        {% else %}
+        <div class="book-cover-placeholder">&#128214;</div>
+        {% endif %}
         <div class="book-info">
             <a href="{{ url_for('detail', book_id=book['id']) }}">{{ book['title'] }}</a>
             <div class="book-meta">{{ book['author'] }}{% if book['year'] %} &middot; {{ book['year'] }}{% endif %}</div>

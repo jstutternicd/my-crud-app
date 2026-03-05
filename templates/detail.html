@@ -7,27 +7,57 @@
         border-radius: 6px;
         padding: 24px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 24px;
     }
-    .book-detail h2 { margin-bottom: 4px; color: #2c3e50; }
-    .book-detail .meta { color: #777; margin-bottom: 16px; font-size: 0.95rem; }
-    .book-detail .description { margin-bottom: 24px; }
+    .book-cover-detail {
+        width: 128px;
+        height: 192px;
+        object-fit: cover;
+        border-radius: 4px;
+        flex-shrink: 0;
+        background: #e8e8e8;
+    }
+    .book-cover-detail-placeholder {
+        width: 128px;
+        height: 192px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        background: #e8e8e8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #bbb;
+        font-size: 3rem;
+    }
+    .book-content { flex: 1; }
+    .book-content h2 { margin-bottom: 4px; color: #2c3e50; }
+    .book-content .meta { color: #777; margin-bottom: 16px; font-size: 0.95rem; }
+    .book-content .description { margin-bottom: 24px; }
     .actions { display: flex; gap: 8px; }
     .actions form { display: inline; }
 </style>
 {% endblock %}
 {% block content %}
 <div class="book-detail">
-    <h2>{{ book['title'] }}</h2>
-    <p class="meta">{{ book['author'] }}{% if book['year'] %} &middot; {{ book['year'] }}{% endif %}</p>
-    {% if book['description'] %}
-    <p class="description">{{ book['description'] }}</p>
+    {% if book['isbn'] %}
+    <img class="book-cover-detail" src="https://covers.openlibrary.org/b/isbn/{{ book['isbn'] }}-M.jpg" alt="Cover" onerror="this.outerHTML='<div class=\'book-cover-detail-placeholder\'>&#128214;</div>'">
+    {% else %}
+    <div class="book-cover-detail-placeholder">&#128214;</div>
     {% endif %}
-    <div class="actions">
-        <a href="{{ url_for('edit', book_id=book['id']) }}" class="btn btn-primary">Edit</a>
-        <form action="{{ url_for('delete', book_id=book['id']) }}" method="post" onsubmit="return confirm('Delete this book?');">
-            <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
-        <a href="{{ url_for('index') }}" class="btn btn-secondary">Back</a>
+    <div class="book-content">
+        <h2>{{ book['title'] }}</h2>
+        <p class="meta">{{ book['author'] }}{% if book['year'] %} &middot; {{ book['year'] }}{% endif %}</p>
+        {% if book['description'] %}
+        <p class="description">{{ book['description'] }}</p>
+        {% endif %}
+        <div class="actions">
+            <a href="{{ url_for('edit', book_id=book['id']) }}" class="btn btn-primary">Edit</a>
+            <form action="{{ url_for('delete', book_id=book['id']) }}" method="post" onsubmit="return confirm('Delete this book?');">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Back</a>
+        </div>
     </div>
 </div>
 {% endblock %}
